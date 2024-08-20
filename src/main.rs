@@ -1,4 +1,7 @@
-use clap::{arg, command, Command, ArgMatches};
+use clap::{arg, command, ArgMatches, Command};
+use std::env;
+
+mod data;
 
 fn main() {
     let matches = parse_args();
@@ -22,5 +25,10 @@ fn parse_args() -> ArgMatches {
 }
 
 fn init(args: &ArgMatches) {
-    println!("Hello, World!");
+    let _ = data::init(); // Ignore for now the possibility of an error
+    println!(
+        "Initialized empty pgit directory in {}/{}",
+        env::current_dir().unwrap().display(),
+        data::GIT_DIR
+    )
 }
