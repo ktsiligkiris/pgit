@@ -1,0 +1,8 @@
+* Origin
+This small project is based on the amazing μgit project by Nikita
+Leshenko which is beautifully presented in the site
+https://www.leshenko.net/p/ugit/#
+
+My personal quest is to see how I can follow the python implementation
+of μgit and implement something similar in Rust. This is all done as
+an educational exercise to get to know better Rust.
