@@ -1,15 +1,17 @@
+use crate::data::{get_object, hash_object};
 use clap::{arg, command, ArgMatches, Command};
 use std::env;
 use std::fs;
 use std::io::{self, Write};
 
+#[macro_use]
 mod data;
 
 fn main() {
     let matches = parse_args();
     match matches.subcommand() {
         Some(("init", sub_matches)) => init(sub_matches),
-        Some(("hash-object", sub_matches)) => hash_object(sub_matches),
+        Some(("hash-object", sub_matches)) => hash_obj(sub_matches),
         Some(("cat-file", sub_matches)) => cat_file(sub_matches),
         _ => unreachable!("Exhausted list of subcommands and subcommand _required prevents `None`"),
     }
@@ -47,15 +49,15 @@ fn init(_args: &ArgMatches) {
     )
 }
 
-fn hash_object(args: &ArgMatches) {
+fn hash_obj(args: &ArgMatches) {
     let filepath = args.get_one::<String>("FILE").unwrap();
     let contents = fs::read_to_string(filepath).expect("Should have been able to read the file");
-    println!("{}", data::hash_object(contents));
+    println!("{}", hash_object!(contents));
 }
 
 fn cat_file(args: &ArgMatches) {
     let mut stdout = io::stdout().lock();
     let oid = args.get_one::<String>("OID").unwrap();
-    let content = data::get_object(oid).unwrap();
+    let content = get_object!(oid).unwrap();
     stdout.write_all(&content).unwrap();
 }
