@@ -6,6 +6,7 @@ use std::io::{self, Write};
 
 #[macro_use]
 mod data;
+mod base;
 
 fn main() {
     let matches = parse_args();
