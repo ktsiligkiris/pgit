@@ -43,7 +43,8 @@ fn parse_args() -> ArgMatches {
         )
         .subcommand(
             Command::new("write-tree")
-                .about("Take the current working directory and sotre it to object database"))
+                .about("Take the current working directory and store it to object database"),
+        )
         .get_matches()
 }
 
@@ -70,5 +71,5 @@ fn cat_file(args: &ArgMatches) {
 }
 
 fn write_tree_() {
-    write_tree!();
+    println!("{}", write_tree!());
 }

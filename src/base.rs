@@ -1,7 +1,11 @@
 use crate::data::hash_object;
-use std::{fs::{self, read_dir}, path::PathBuf};
+use std::{
+    fs::{self, read_dir},
+    path::PathBuf,
+};
 
-pub fn write_tree(directory: String) {
+pub fn write_tree(directory: String)-> String {
+    let mut entries: Vec<(PathBuf, String, &str)> = Vec::new();
     for entry in read_dir(directory).unwrap() {
         let entry = entry.unwrap();
         let full = entry.path();
@@ -9,12 +13,22 @@ pub fn write_tree(directory: String) {
             continue;
         }
         if full.is_file() {
-            let contents = fs::read_to_string(full.clone()).expect("Should have been able to read the file");
-            println!("{}, {:?}", hash_object!(contents), full)
+            let type_ = "blob";
+            let contents =
+                fs::read_to_string(&full).expect("Should have been able to read the file");
+            let oid = hash_object!(contents);
+            entries.push((full, String::from(oid), type_));
         } else if full.is_dir() {
-            write_tree(full.into_os_string().into_string().unwrap());
+            let type_ = "tree";
+            let oid = write_tree(full.clone().into_os_string().into_string().unwrap());
+            entries.push((full, String::from(oid), type_));
         }
     }
+    entries
+        .into_iter()
+        .map(|entry| format!("{} {} {:?}", entry.2, entry.1, entry.0))
+        .collect::<Vec<String>>()
+        .join("\n")
 }
 
 macro_rules! write_tree {
@@ -27,5 +41,8 @@ macro_rules! write_tree {
 }
 
 fn is_ignored(path: PathBuf) -> bool {
-    path.into_os_string().into_string().unwrap().contains(".pgit")
+    path.into_os_string()
+        .into_string()
+        .unwrap()
+        .contains(".pgit")
 }
