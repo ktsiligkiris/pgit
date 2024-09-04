@@ -1,5 +1,5 @@
-//use crate::data;
-use std::{fs::read_dir, path::PathBuf};
+use crate::data::hash_object;
+use std::{fs::{self, read_dir}, path::PathBuf};
 
 pub fn write_tree(directory: String) {
     for entry in read_dir(directory).unwrap() {
@@ -8,10 +8,11 @@ pub fn write_tree(directory: String) {
         if is_ignored(full.clone()) {
             continue;
         }
-        if full.is_dir() {
+        if full.is_file() {
+            let contents = fs::read_to_string(full.clone()).expect("Should have been able to read the file");
+            println!("{}, {:?}", hash_object!(contents), full)
+        } else if full.is_dir() {
             write_tree(full.into_os_string().into_string().unwrap());
-        } else {
-            println!("{:?}", full);
         }
     }
 }
